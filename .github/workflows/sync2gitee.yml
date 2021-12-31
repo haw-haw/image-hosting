@@ -20,9 +20,10 @@ jobs:
         env:
           # 在 Settings->Secrets 配置 GITEE_PRIVATE_KEY
           SSH_KEY: ${{ secrets.GITEE_PRIVATE_KEY }}
-          GITHUB_REPO: "git@github.com:haw-haw/figurebed.git"
+          # GITHUB_REPO: "git@github.com:haw-haw/figurebed.git"
+          GITHUB_REPO: "https://github.com/haw-haw/figurebed.git"
           GITEE_REPO: "git@gitee.com:hawhaw/figurebed.git"
-          GIT_SSH_COMMAND: "ssh -v"
+          # GIT_SSH_COMMAND: "ssh -v"
         run: |
           #if [[ -n "$SSH_KEY" ]]
           #then
