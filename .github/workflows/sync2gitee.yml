@@ -34,8 +34,9 @@ jobs:
           echo "$SSH_KEY" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           
-          echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
-          #ssh-keyscan github.com >> ~/.ssh/known_hosts
+          #echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          ssh-keyscan gitee.com >> ~/.ssh/known_hosts
           git config --global user.name "hawhaw"
           git config --global user.email "gitee@theyan.gs"
           
