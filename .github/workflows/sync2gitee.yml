@@ -22,6 +22,7 @@ jobs:
           SSH_KEY: ${{ secrets.GITEE_PRIVATE_KEY }}
           GITHUB_REPO: "git@github.com:haw-haw/figurebed.git"
           GITEE_REPO: "git@gitee.com:hawhaw/figurebed.git"
+          GIT_SSH_COMMAND: "ssh -v"
         run: |
           #if [[ -n "$SSH_KEY" ]]
           #then
@@ -41,7 +42,11 @@ jobs:
           git config --global user.email "gitee@theyan.gs"
           
           git clone --mirror "$GITHUB_REPO" && cd `basename "$GITHUB_REPO"`
+          echo "1"
           git remote set-url --push origin "$GITEE_REPO"
+          echo "2"
           git fetch -p origin
+          echo "3"
           git for-each-ref --format 'delete %(refname)' refs/pull | git update-ref --stdin
+          echo "4"
           git push --mirror
