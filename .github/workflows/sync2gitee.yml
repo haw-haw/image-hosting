@@ -1,0 +1,44 @@
+# 通过 Github actions， 在 Github 仓库的每一次 commit 后自动同步到 Gitee 上
+name: sync2gitee
+on:
+  push:
+    branches:
+      - master
+jobs:
+  repo-sync:
+    env:
+      dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+      dst_token: ${{ secrets.GITEE_TOKEN }}
+      gitee_user: ${{ secrets.GITEE_USER }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+      
+      - name: sync github -> gitee 2
+        env:
+          # 在 Settings->Secrets 配置 GITEE_PRIVATE_KEY
+          SSH_KEY: ${{ secrets.GITEE_PRIVATE_KEY }}
+          GITHUB_REPO: "git@github.com:haw-haw/figurebed.git"
+          GITEE_REPO: "git@gitee.com:hawhaw/figurebed.git"
+        run: |
+          if [[ -n "$SSH_KEY" ]]
+          then
+            mkdir -p /root/.ssh
+            echo "$SSH_KEY" > /root/.ssh/id_rsa
+            chmod 600 /root/.ssh/id_rsa
+          fi
+
+          mkdir -p ~/.ssh
+          cp /root/.ssh/* ~/.ssh/ 2> /dev/null || true
+          echo "StrictHostKeyChecking no" >> /etc/ssh/ssh_config
+          #ssh-keyscan github.com >> ~/.ssh/known_hosts
+          git config --global user.name "hawhaw"
+          git config --global user.email "gitee@theyan.gs"
+          
+          git clone --mirror "$GITHUB_REPO" && cd `basename "$GITHUB_REPO"`
+          git remote set-url --push origin "$GITEE_REPO"
+          git fetch -p origin
+          git for-each-ref --format 'delete %(refname)' refs/pull | git update-ref --stdin
+          git push --mirror
